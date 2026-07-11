@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Variables de entorno
+.env
+backend/.env
+frontend/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vite
+frontend/dist/
+frontend/.vite/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
