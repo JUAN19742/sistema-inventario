@@ -31,7 +31,7 @@ exports.registrarEntrada = async (req, res) => {
   }
 };
 
-// HU-08: Registrar salida
+// HU-08:Registrar salida
 exports.registrarSalida = async (req, res) => {
   try {
     const { productoId, cantidad, motivo } = req.body;
