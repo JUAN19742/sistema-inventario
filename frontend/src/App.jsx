@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Productos from './pages/Productos';
 import Inventario from './pages/Inventario';
 import Catalogo from './pages/Catalogo';
+import Ventas from './pages/Ventas';
 
 const Layout = ({ children }) => (
   <div className="flex min-h-screen bg-gray-100">
@@ -39,6 +40,11 @@ const App = () => (
         }/>
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/ventas" element={
+          <ProtectedRoute>
+            <Layout><Ventas /></Layout>
+          </ProtectedRoute>
+        }/>
       </Routes>
     </AuthProvider>
   </BrowserRouter>

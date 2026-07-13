@@ -2,7 +2,8 @@ const Producto = require('../models/Producto');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const producto = await Producto.create(req.body);
+    const { categoriaId, ...resto } = req.body;
+    const producto = await Producto.create({ ...resto, categoria: categoriaId });
     res.status(201).json(producto);
   } catch (error) {
     if (error.code === 11000) return res.status(400).json({ mensaje: 'Ya existe un producto con ese nombre' });
@@ -28,7 +29,9 @@ exports.obtenerProductos = async (req, res) => {
 
 exports.actualizarProducto = async (req, res) => {
   try {
-    const producto = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { categoriaId, ...resto } = req.body;
+    const body = categoriaId ? { ...resto, categoria: categoriaId } : resto;
+    const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
   } catch (error) {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconPackage, IconLogOut, IconBoxes } from './Icons';
+import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales } from './Icons';
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
@@ -33,6 +33,13 @@ const Navbar = () => {
         >
           <IconBoxes />
           Inventario
+        </Link>
+        <Link
+          to="/ventas"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+        >
+          <IconSales />
+          Ventas
         </Link>
       </div>
 
