@@ -8,6 +8,5 @@ const {
 
 router.post('/entrada', verificarToken, registrarEntrada);
 router.post('/salida', verificarToken, registrarSalida);
-router.get('/', verificarToken, obtenerHistorial);
 
 module.exports = router;
