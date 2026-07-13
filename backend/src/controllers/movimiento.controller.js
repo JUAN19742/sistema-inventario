@@ -1,10 +1,10 @@
 const Movimiento = require('../models/Movimiento');
 const Producto = require('../models/Producto');
 
-// HU-07: Registrar entrada
+// HU-07: Registrar entrada y HU: 17: Gestionar proveedores
 exports.registrarEntrada = async (req, res) => {
   try {
-    const { productoId, cantidad, proveedor, motivo } = req.body;
+    const { productoId, cantidad, proveedorId, motivo } = req.body;
 
     if (cantidad <= 0) {
       return res.status(400).json({ mensaje: 'La cantidad debe ser mayor a 0' });
@@ -21,11 +21,12 @@ exports.registrarEntrada = async (req, res) => {
       tipo: 'entrada',
       cantidad,
       stockResultante: producto.stock,
-      proveedor,
+      proveedor: proveedorId || null,
       motivo,
     });
 
-    res.status(201).json({ movimiento, stockActual: producto.stock });
+    const movimientoPopulado = await movimiento.populate('proveedor', 'nombre');
+    res.status(201).json({ movimiento: movimientoPopulado, stockActual: producto.stock });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al registrar entrada' });
   }
@@ -79,6 +80,7 @@ exports.obtenerHistorial = async (req, res) => {
 
     const movimientos = await Movimiento.find(filtro)
       .populate('producto', 'nombre')
+      .populate('proveedor', 'nombre')
       .sort({ createdAt: -1 });
 
     res.json(movimientos);
