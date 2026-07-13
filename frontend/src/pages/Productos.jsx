@@ -23,16 +23,7 @@ const Productos = () => {
     cargarProductos();
   }, [busqueda]);
 
-  const eliminarProducto = async (id) => {
-    if (!confirm('¿Seguro que deseas desactivar este producto?')) return;
-    try {
-      await api.delete(`/productos/${id}`);
-      toast.success('Producto desactivado');
-      cargarProductos();
-    } catch {
-      toast.error('Error al eliminar');
-    }
-  };
+  
 
   const abrirModal = (producto = null) => {
     setProductoEditar(producto);
@@ -93,7 +84,7 @@ const Productos = () => {
                     <Pencil size={15} />
                   </button>
                   <button
-                    onClick={() => eliminarProducto(p._id)}
+                    
                     className="p-1.5 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-600 transition"
                   >
                     <Trash2 size={15} />
