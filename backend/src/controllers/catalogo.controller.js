@@ -9,6 +9,7 @@ exports.obtenerCatalogo = async (req, res) => {
 
     const productos = await Producto.find(filtro)
       .select('nombre descripcion categoria precioVenta imagen stock')
+      .populate('categoria', 'nombre')
       .sort({ categoria: 1 });
 
     res.json(productos);
