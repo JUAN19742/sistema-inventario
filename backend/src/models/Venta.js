@@ -15,12 +15,11 @@ const ventaSchema = new mongoose.Schema({
   estado: { type: String, enum: ['activa', 'cancelada'], default: 'activa' },
 }, { timestamps: true });
 
-ventaSchema.pre('save', async function (next) {
+ventaSchema.pre('save', async function () {
   if (!this.folio) {
     const count = await mongoose.model('Venta').countDocuments();
     this.folio = `VTA-${String(count + 1).padStart(4, '0')}`;
   }
-  next();
 });
 
 module.exports = mongoose.model('Venta', ventaSchema);

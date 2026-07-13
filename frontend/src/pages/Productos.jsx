@@ -76,7 +76,7 @@ const Productos = () => {
             {productos.map((p) => (
               <tr key={p._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-800">{p.nombre}</td>
-                <td className="px-4 py-3 text-gray-500">{p.categoria}</td>
+                <td className="px-4 py-3 text-gray-500">{p.categoria?.nombre || '—'}</td>
                 <td className="px-4 py-3 text-gray-800">${p.precioVenta}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
