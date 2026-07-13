@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const productoSchema = new mongoose.Schema({
   nombre:       { type: String, required: true, unique: true },
   descripcion:  { type: String, default: '' },
-  categoria:    { type: String, required: true },
+  categoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria', required: true },
   precioCompra: { type: Number, required: true },
   precioVenta:  { type: Number, required: true },
   stock:        { type: Number, required: true, default: 0 },

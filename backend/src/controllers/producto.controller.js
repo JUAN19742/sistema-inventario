@@ -17,7 +17,9 @@ exports.obtenerProductos = async (req, res) => {
     if (nombre) filtro.nombre = { $regex: nombre, $options: 'i' };
     if (categoria) filtro.categoria = categoria;
 
-    const productos = await Producto.find(filtro).sort({ createdAt: -1 });
+    const productos = await Producto.find(filtro)
+      .populate('categoria', 'nombre')
+      .sort({ createdAt: -1 });
     res.json(productos);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener productos' });
