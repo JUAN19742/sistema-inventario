@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
-import { X } from 'lucide-react';
+import { IconX } from './Icons';
 
 const camposIniciales = {
   nombre: '', descripcion: '', categoria: '',
@@ -52,7 +52,7 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
             {producto ? 'Editar producto' : 'Nuevo producto'}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={20} />
+            <IconX />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
