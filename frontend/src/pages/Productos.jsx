@@ -20,8 +20,10 @@ const Productos = () => {
   };
 
   useEffect(() => {
-    cargarProductos();
-  }, [busqueda]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  cargarProductos();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [busqueda]);
 
   const eliminarProducto = async (id) => {
     if (!confirm('¿Seguro que deseas desactivar este producto?')) return;
