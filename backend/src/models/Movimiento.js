@@ -6,7 +6,7 @@ const movimientoSchema = new mongoose.Schema({
   cantidad: { type: Number, required: true },
   stockResultante: { type: Number, required: true },
   motivo: { type: String, default: '' },
-  proveedor: { type: String, default: '' },
+  proveedor: { type: mongoose.Schema.Types.ObjectId, ref: 'Proveedor', default: null },
   referencia: { type: String, default: '' }, // folio de venta si aplica
 }, { timestamps: true });
 
