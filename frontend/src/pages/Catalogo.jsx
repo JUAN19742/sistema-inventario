@@ -66,7 +66,7 @@ const Catalogo = () => {
   const total = carrito.reduce((sum, item) => sum + item.precioVenta * item.cantidad, 0);
   const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
 
-  const categorias = [...new Set(productos.map((p) => p.categoria))];
+  const categorias = [...new Set(productos.map((p) => p.categoria?.nombre).filter(Boolean))];
 
   const enviarPedidoWhatsApp = () => {
     if (carrito.length === 0) return;
