@@ -9,6 +9,7 @@ import Productos from './pages/Productos';
 import Inventario from './pages/Inventario';
 import Catalogo from './pages/Catalogo';
 import Ventas from './pages/Ventas';
+import HistorialVentas from './pages/HistorialVentas';
 
 const Layout = ({ children }) => (
   <div className="flex min-h-screen bg-gray-100">
@@ -43,6 +44,11 @@ const App = () => (
         <Route path="/ventas" element={
           <ProtectedRoute>
             <Layout><Ventas /></Layout>
+          </ProtectedRoute>
+        }/>
+        <Route path="/historial-ventas" element={
+          <ProtectedRoute>
+            <Layout><HistorialVentas /></Layout>
           </ProtectedRoute>
         }/>
       </Routes>

@@ -62,3 +62,33 @@ exports.registrarVenta = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al registrar venta' });
   }
 };
+
+exports.obtenerVentas = async (req, res) => {
+  try {
+    const { fechaInicio, fechaFin } = req.query;
+    const filtro = {};
+
+    if (fechaInicio || fechaFin) {
+      filtro.createdAt = {};
+      if (fechaInicio) filtro.createdAt.$gte = new Date(fechaInicio);
+      if (fechaFin) filtro.createdAt.$lte = new Date(fechaFin);
+    }
+
+    const ventas = await Venta.find(filtro)
+      .sort({ createdAt: -1 });
+
+    res.json(ventas);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener ventas' });
+  }
+};
+
+exports.obtenerVenta = async (req, res) => {
+  try {
+    const venta = await Venta.findById(req.params.id);
+    if (!venta) return res.status(404).json({ mensaje: 'Venta no encontrada' });
+    res.json(venta);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener venta' });
+  }
+};
