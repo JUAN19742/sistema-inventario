@@ -22,6 +22,19 @@ const HistorialVentas = () => {
     };
     cargarVentas();
   }, [fechaInicio, fechaFin]);
+  
+  const cancelarVenta = async (id) => {
+    if (!confirm('¿Seguro que deseas cancelar esta venta? El stock se restaurará automáticamente.')) return;
+    try {
+      await api.put(`/ventas/${id}/cancelar`);
+      toast.success('Venta cancelada correctamente');
+      setVentaSeleccionada(null);
+      const { data } = await api.get('/ventas');
+      setVentas(data);
+    } catch (err) {
+      toast.error(err.response?.data?.mensaje || 'Error al cancelar venta');
+    }
+  };
 
   return (
     <div>
@@ -164,7 +177,15 @@ const HistorialVentas = () => {
               </div>
             </div>
 
-            <div className="px-6 pb-6">
+            <div className="px-6 pb-6 flex flex-col gap-2">
+              {ventaSeleccionada.estado === 'activa' && (
+                <button
+                  onClick={() => cancelarVenta(ventaSeleccionada._id)}
+                  className="w-full bg-red-600 text-white rounded-xl py-2 text-sm font-medium hover:bg-red-700 transition"
+                >
+                  Cancelar venta
+                </button>
+              )}
               <button
                 onClick={() => setVentaSeleccionada(null)}
                 className="w-full border rounded-xl py-2 text-sm font-medium hover:bg-gray-50 transition"

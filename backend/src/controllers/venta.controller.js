@@ -92,3 +92,50 @@ exports.obtenerVenta = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al obtener venta' });
   }
 };
+
+exports.cancelarVenta = async (req, res) => {
+  try {
+    const venta = await Venta.findById(req.params.id);
+    if (!venta) return res.status(404).json({ mensaje: 'Venta no encontrada' });
+
+    if (venta.estado === 'cancelada') {
+      return res.status(400).json({ mensaje: 'La venta ya está cancelada' });
+    }
+
+    const hoy = new Date();
+    const fechaVenta = new Date(venta.createdAt);
+    const mismoDia =
+      hoy.getFullYear() === fechaVenta.getFullYear() &&
+      hoy.getMonth() === fechaVenta.getMonth() &&
+      hoy.getDate() === fechaVenta.getDate();
+
+    if (!mismoDia) {
+      return res.status(400).json({ mensaje: 'Solo se puede cancelar una venta del mismo día' });
+    }
+
+    // Restaurar stock de cada producto
+    for (const item of venta.detalle) {
+      const producto = await Producto.findById(item.producto);
+      if (producto) {
+        producto.stock += item.cantidad;
+        await producto.save();
+
+        await Movimiento.create({
+          producto: producto._id,
+          tipo: 'entrada',
+          cantidad: item.cantidad,
+          stockResultante: producto.stock,
+          motivo: `Cancelación de venta ${venta.folio}`,
+          referencia: venta.folio,
+        });
+      }
+    }
+
+    venta.estado = 'cancelada';
+    await venta.save();
+
+    res.json({ mensaje: 'Venta cancelada correctamente', venta });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cancelar venta' });
+  }
+};
