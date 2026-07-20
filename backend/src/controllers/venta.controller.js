@@ -141,3 +141,21 @@ exports.cancelarVenta = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al cancelar venta' });
   }
 };
+
+exports.obtenerVentasPorCliente = async (req, res) => {
+  try {
+    const ventas = await Venta.find({
+      cliente: req.params.clienteId,
+      estado: 'activa'
+    })
+      .populate('cliente', 'nombre whatsapp')
+      .sort({ createdAt: -1 });
+
+    const totalGastado = ventas.reduce((sum, v) => sum + v.total, 0);
+    const totalCompras = ventas.length;
+
+    res.json({ ventas, totalGastado, totalCompras });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener ventas del cliente' });
+  }
+};
