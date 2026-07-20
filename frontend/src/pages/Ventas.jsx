@@ -7,17 +7,23 @@ const Ventas = () => {
   const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [clientes, setClientes] = useState([]);
+  const [clienteId, setClienteId] = useState('');
 
   useEffect(() => {
-    const cargarProductos = async () => {
+    const cargarDatos = async () => {
       try {
-        const { data } = await api.get('/productos');
-        setProductos(data);
+        const [prodRes, cliRes] = await Promise.all([
+          api.get('/productos'),
+          api.get('/clientes'),
+        ]);
+        setProductos(prodRes.data);
+        setClientes(cliRes.data);
       } catch {
-        toast.error('Error al cargar productos');
+        toast.error('Error al cargar datos');
       }
     };
-    cargarProductos();
+    cargarDatos();
   }, []);
 
   const agregarAlCarrito = (producto) => {
@@ -77,9 +83,10 @@ const Ventas = () => {
         productoId: item._id,
         cantidad: item.cantidad,
       }));
-      const { data } = await api.post('/ventas', { detalle });
+      const { data } = await api.post('/ventas', { detalle, clienteId: clienteId || null });
       toast.success(`Venta ${data.folio} registrada exitosamente`);
       setCarrito([]);
+      setClienteId('');
       const { data: productosActualizados } = await api.get('/productos');
       setProductos(productosActualizados);
     } catch (err) {
@@ -182,6 +189,19 @@ const Ventas = () => {
               <span className="text-xl font-bold text-gray-900">
                 ${total.toFixed(2)}
               </span>
+            </div>
+            <div className="mb-3">
+              <label className="text-sm text-gray-600 mb-1 block">Cliente (opcional)</label>
+              <select
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+                value={clienteId}
+                onChange={(e) => setClienteId(e.target.value)}
+              >
+                <option value="">Sin cliente</option>
+                {clientes.map((c) => (
+                  <option key={c._id} value={c._id}>{c.nombre} — {c.whatsapp}</option>
+                ))}
+              </select>
             </div>
             <button
               onClick={registrarVenta}
