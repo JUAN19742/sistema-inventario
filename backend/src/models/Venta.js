@@ -10,6 +10,7 @@ const detalleVentaSchema = new mongoose.Schema({
 
 const ventaSchema = new mongoose.Schema({
   folio: { type: String, unique: true },
+  cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', default: null },
   detalle: [detalleVentaSchema],
   total: { type: Number, required: true },
   estado: { type: String, enum: ['activa', 'cancelada'], default: 'activa' },

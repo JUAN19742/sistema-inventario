@@ -70,6 +70,7 @@ const HistorialVentas = () => {
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
             <tr>
               <th className="px-4 py-3 text-left">Folio</th>
+              <th className="px-4 py-3 text-left">Cliente</th>
               <th className="px-4 py-3 text-left">Fecha</th>
               <th className="px-4 py-3 text-left">Productos</th>
               <th className="px-4 py-3 text-left">Total</th>
@@ -81,6 +82,16 @@ const HistorialVentas = () => {
             {ventas.map((v) => (
               <tr key={v._id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-800">{v.folio}</td>
+                <td className="px-4 py-3 text-gray-500">
+                  {v.cliente ? (
+                    <button
+                      onClick={() => window.open(`https://wa.me/${v.cliente.whatsapp}`, '_blank')}
+                      className="text-green-600 hover:text-green-800 font-medium"
+                    >
+                      {v.cliente.nombre}
+                    </button>
+                  ) : '—'}
+                </td>
                 <td className="px-4 py-3 text-gray-500">
                   {new Date(v.createdAt).toLocaleDateString()}{' '}
                   {new Date(v.createdAt).toLocaleTimeString()}
@@ -129,6 +140,11 @@ const HistorialVentas = () => {
                 <h3 className="text-lg font-bold text-gray-800">
                   {ventaSeleccionada.folio}
                 </h3>
+                {ventaSeleccionada.cliente && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Cliente: <span className="font-medium text-gray-800">{ventaSeleccionada.cliente.nombre}</span>
+                  </p>
+                )}
                 <p className="text-sm text-gray-500 mt-1">
                   {new Date(ventaSeleccionada.createdAt).toLocaleDateString()}{' '}
                   {new Date(ventaSeleccionada.createdAt).toLocaleTimeString()}

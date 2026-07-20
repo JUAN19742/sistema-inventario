@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory } from './Icons';
+import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers } from './Icons';
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
@@ -47,6 +47,13 @@ const Navbar = () => {
         >
           <IconHistory />
           Historial ventas
+        </Link>
+        <Link
+          to="/clientes"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+        >
+          <IconUsers />
+          Clientes
         </Link>
       </div>
 
