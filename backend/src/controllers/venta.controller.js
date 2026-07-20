@@ -4,13 +4,12 @@ const Movimiento = require('../models/Movimiento');
 
 exports.registrarVenta = async (req, res) => {
   try {
-    const { detalle } = req.body;
+    const { detalle, clienteId } = req.body;
 
     if (!detalle || detalle.length === 0) {
       return res.status(400).json({ mensaje: 'La venta debe tener al menos un producto' });
     }
 
-    // Verificar stock y construir detalle
     const detalleCompleto = [];
     let total = 0;
 
@@ -37,11 +36,13 @@ exports.registrarVenta = async (req, res) => {
       });
     }
 
-    // Crear la venta
-    const venta = new Venta({ detalle: detalleCompleto, total });
+    const venta = new Venta({
+      detalle: detalleCompleto,
+      total,
+      cliente: clienteId || null,
+    });
     await venta.save();
 
-    // Descontar stock y registrar movimientos
     for (const item of detalleCompleto) {
       const producto = await Producto.findById(item.producto);
       producto.stock -= item.cantidad;
@@ -75,6 +76,7 @@ exports.obtenerVentas = async (req, res) => {
     }
 
     const ventas = await Venta.find(filtro)
+      .populate('cliente', 'nombre whatsapp')
       .sort({ createdAt: -1 });
 
     res.json(ventas);
