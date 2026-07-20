@@ -13,7 +13,11 @@ const ventaSchema = new mongoose.Schema({
   cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', default: null },
   detalle: [detalleVentaSchema],
   total: { type: Number, required: true },
-  estado: { type: String, enum: ['activa', 'cancelada'], default: 'activa' },
+  estado: {
+    type: String,
+    enum: ['pendiente', 'confirmado', 'en preparacion', 'entregado', 'cancelado'],
+    default: 'pendiente'
+  },
 }, { timestamps: true });
 
 ventaSchema.pre('save', async function () {

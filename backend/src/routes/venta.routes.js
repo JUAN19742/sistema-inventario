@@ -5,7 +5,8 @@ const {
   obtenerVentas,
   obtenerVenta,
   cancelarVenta,
-  obtenerVentasPorCliente
+  obtenerVentasPorCliente,
+  cambiarEstadoVenta
 } = require('../controllers/venta.controller');
 
 router.post('/',                    verificarToken, registrarVenta);
@@ -13,5 +14,6 @@ router.get('/',                     verificarToken, obtenerVentas);
 router.get('/cliente/:clienteId',   verificarToken, obtenerVentasPorCliente);
 router.get('/:id',                  verificarToken, obtenerVenta);
 router.put('/:id/cancelar',         verificarToken, cancelarVenta);
+router.put('/:id/estado',           verificarToken, cambiarEstadoVenta);
 
 module.exports = router;

@@ -159,3 +159,58 @@ exports.obtenerVentasPorCliente = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al obtener ventas del cliente' });
   }
 };
+
+exports.cambiarEstadoVenta = async (req, res) => {
+  try {
+    const { estado } = req.body;
+    const estadosValidos = ['pendiente', 'confirmado', 'en preparacion', 'entregado', 'cancelado'];
+
+    if (!estadosValidos.includes(estado)) {
+      return res.status(400).json({ mensaje: 'Estado no válido' });
+    }
+
+    const venta = await Venta.findById(req.params.id);
+    if (!venta) return res.status(404).json({ mensaje: 'Venta no encontrada' });
+
+    if (venta.estado === 'cancelado') {
+      return res.status(400).json({ mensaje: 'No se puede cambiar el estado de una venta cancelada' });
+    }
+
+    // Si se cancela, restaurar stock
+    if (estado === 'cancelado') {
+      const hoy = new Date();
+      const fechaVenta = new Date(venta.createdAt);
+      const mismoDia =
+        hoy.getFullYear() === fechaVenta.getFullYear() &&
+        hoy.getMonth() === fechaVenta.getMonth() &&
+        hoy.getDate() === fechaVenta.getDate();
+
+      if (!mismoDia) {
+        return res.status(400).json({ mensaje: 'Solo se puede cancelar una venta del mismo día' });
+      }
+
+      for (const item of venta.detalle) {
+        const producto = await Producto.findById(item.producto);
+        if (producto) {
+          producto.stock += item.cantidad;
+          await producto.save();
+          await Movimiento.create({
+            producto: producto._id,
+            tipo: 'entrada',
+            cantidad: item.cantidad,
+            stockResultante: producto.stock,
+            motivo: `Cancelación de venta ${venta.folio}`,
+            referencia: venta.folio,
+          });
+        }
+      }
+    }
+
+    venta.estado = estado;
+    await venta.save();
+
+    res.json({ mensaje: 'Estado actualizado', venta });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al cambiar estado' });
+  }
+};
