@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers, IconClipboard } from './Icons';
+import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers, IconClipboard, IconShield } from './Icons';
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
@@ -62,6 +62,15 @@ const Navbar = () => {
           <IconClipboard />
           Pedidos
         </Link>
+        {usuario?.rol === 'admin' && (
+          <Link
+            to="/usuarios"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+          >
+            <IconShield />
+            Usuarios
+          </Link>
+        )}
       </div>
 
       <button

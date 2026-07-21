@@ -7,7 +7,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(() => {
     const nombre = localStorage.getItem('nombre');
-    return nombre ? { nombre } : null;
+    const rol = localStorage.getItem('rol');
+    return nombre ? { nombre, rol } : null;
   });
   const navigate = useNavigate();
 
@@ -15,13 +16,15 @@ export const AuthProvider = ({ children }) => {
     const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('token', data.token);
     localStorage.setItem('nombre', data.nombre);
-    setUsuario({ nombre: data.nombre });
+    localStorage.setItem('rol', data.rol);
+    setUsuario({ nombre: data.nombre, rol: data.rol });
     navigate('/dashboard');
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('nombre');
+    localStorage.removeItem('rol');
     setUsuario(null);
     navigate('/login');
   };
@@ -33,4 +36,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
