@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers, IconClipboard, IconShield } from './Icons';
+import AlertasStock from './AlertasStock';
 
 const Navbar = () => {
   const { usuario, logout } = useAuth();
@@ -72,6 +73,8 @@ const Navbar = () => {
           </Link>
         )}
       </div>
+      
+      <AlertasStock />
 
       <button
         onClick={logout}
