@@ -5,12 +5,14 @@ const {
   crearProducto,
   obtenerProductos,
   actualizarProducto,
-  eliminarProducto
+  eliminarProducto,
+  obtenerAlertas
 } = require('../controllers/producto.controller');
 
-router.get('/',     verificarToken, obtenerProductos);
-router.post('/',    verificarToken, verificarRol('admin'), crearProducto);
-router.put('/:id',  verificarToken, verificarRol('admin'), actualizarProducto);
-router.delete('/:id', verificarToken, verificarRol('admin'), eliminarProducto);
+router.get('/alertas',  verificarToken, obtenerAlertas);
+router.get('/',         verificarToken, obtenerProductos);
+router.post('/',        verificarToken, verificarRol('admin'), crearProducto);
+router.put('/:id',      verificarToken, verificarRol('admin'), actualizarProducto);
+router.delete('/:id',   verificarToken, verificarRol('admin'), eliminarProducto);
 
 module.exports = router;

@@ -52,3 +52,25 @@ exports.eliminarProducto = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al eliminar producto' });
   }
 };
+
+exports.obtenerAlertas = async (req, res) => {
+  try {
+    const productos = await Producto.find({ activo: true })
+      .populate('categoria', 'nombre');
+
+    const alertas = productos.filter((p) => p.stock <= p.stockMinimo);
+
+    res.json({
+      total: alertas.length,
+      productos: alertas.map((p) => ({
+        _id: p._id,
+        nombre: p.nombre,
+        categoria: p.categoria?.nombre || '—',
+        stock: p.stock,
+        stockMinimo: p.stockMinimo,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener alertas' });
+  }
+};
