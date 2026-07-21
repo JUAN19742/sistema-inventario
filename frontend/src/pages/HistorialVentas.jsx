@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import generarComprobante from '../utils/generarComprobante';
 
 const HistorialVentas = () => {
   const [ventas, setVentas] = useState([]);
@@ -202,6 +203,12 @@ const HistorialVentas = () => {
                   Cancelar venta
                 </button>
               )}
+              <button
+                onClick={() => generarComprobante(ventaSeleccionada)}
+                className="w-full bg-gray-900 text-white rounded-xl py-2 text-sm font-medium hover:bg-gray-700 transition"
+              >
+                Descargar comprobante PDF
+              </button>
               <button
                 onClick={() => setVentaSeleccionada(null)}
                 className="w-full border rounded-xl py-2 text-sm font-medium hover:bg-gray-50 transition"
