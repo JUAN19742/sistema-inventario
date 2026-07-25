@@ -10,6 +10,8 @@ const productoSchema = new mongoose.Schema({
   stockMinimo:  { type: Number, default: 5 },
   imagen:       { type: String, default: '' },
   activo:       { type: Boolean, default: true },
+  descuento: { type: Number, default: 0, min: 0, max: 100 },
+  enOferta: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Producto', productoSchema);

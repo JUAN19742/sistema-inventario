@@ -74,3 +74,24 @@ exports.obtenerAlertas = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al obtener alertas' });
   }
 };
+
+exports.actualizarDescuento = async (req, res) => {
+  try {
+    const { descuento, enOferta } = req.body;
+
+    if (descuento < 0 || descuento > 100) {
+      return res.status(400).json({ mensaje: 'El descuento debe estar entre 0 y 100' });
+    }
+
+    const producto = await Producto.findByIdAndUpdate(
+      req.params.id,
+      { descuento, enOferta },
+      { new: true }
+    );
+
+    if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar descuento' });
+  }
+};

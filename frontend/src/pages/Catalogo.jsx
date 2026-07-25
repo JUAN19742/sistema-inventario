@@ -139,7 +139,25 @@ const Catalogo = () => {
               <h3 className="font-medium text-gray-800 text-sm">{p.nombre}</h3>
               <p className="text-gray-400 text-xs mt-1 flex-1">{p.descripcion}</p>
               <div className="flex justify-between items-center mt-2">
-                <span className="font-bold text-gray-900">${p.precioVenta}</span>
+                <div>
+                  {p.enOferta && p.descuento > 0 ? (
+                    <div className="flex flex-col">
+                      <span className="text-gray-400 line-through text-xs">
+                        ${p.precioVenta.toFixed(2)}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-bold text-green-600">
+                          ${(p.precioVenta * (1 - p.descuento / 100)).toFixed(2)}
+                        </span>
+                        <span className="bg-red-100 text-red-600 text-xs font-medium px-1.5 py-0.5 rounded-full">
+                          -{p.descuento}%
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="font-bold text-gray-900">${p.precioVenta}</span>
+                  )}
+                </div>
                 <button
                   onClick={() => agregarAlCarrito(p)}
                   className="bg-gray-900 text-white p-1.5 rounded-lg hover:bg-gray-700 transition"
