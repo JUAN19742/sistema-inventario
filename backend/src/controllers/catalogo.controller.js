@@ -8,7 +8,7 @@ exports.obtenerCatalogo = async (req, res) => {
     if (categoria) filtro.categoria = categoria;
 
     const productos = await Producto.find(filtro)
-      .select('nombre descripcion categoria precioVenta imagen stock')
+      .select('nombre descripcion categoria precioVenta imagen stock descuento enOferta')
       .populate('categoria', 'nombre')
       .sort({ categoria: 1 });
 
