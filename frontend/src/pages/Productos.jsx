@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { IconEdit, IconTrash, IconPlus, IconTag } from '../components/Icons';
 import ProductoModal from '../components/ProductoModal';
+import DescuentoModal from '../components/DescuentoModal';
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
   const [productoEditar, setProductoEditar] = useState(null);
+  const [productoDescuento, setProductoDescuento] = useState(null);
 
   const cargarProductos = async () => {
     try {
@@ -49,7 +51,7 @@ const Productos = () => {
           onClick={() => abrirModal()}
           className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition"
         >
-          <Plus size={16} /> Nuevo producto
+          <IconPlus /> Nuevo producto
         </button>
       </div>
 
@@ -79,26 +81,40 @@ const Productos = () => {
                 <td className="px-4 py-3 text-gray-500">{p.categoria?.nombre || '—'}</td>
                 <td className="px-4 py-3 text-gray-800">${p.precioVenta}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    p.stock <= p.stockMinimo
-                      ? 'bg-red-100 text-red-600'
-                      : 'bg-green-100 text-green-600'
-                  }`}>
-                    {p.stock} uds
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium w-fit ${
+                      p.stock <= p.stockMinimo
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-green-100 text-green-600'
+                    }`}>
+                      {p.stock} uds
+                    </span>
+                    {p.enOferta && p.descuento > 0 && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 w-fit">
+                        -{p.descuento}% oferta
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 flex gap-2">
                   <button
                     onClick={() => abrirModal(p)}
                     className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-800 transition"
                   >
-                    <Pencil size={15} />
+                    <IconEdit />
+                  </button>
+                  <button
+                    onClick={() => setProductoDescuento(p)}
+                    className="p-1.5 rounded-lg hover:bg-yellow-50 text-gray-500 hover:text-yellow-600 transition"
+                    title="Gestionar descuento"
+                  >
+                    <IconTag />
                   </button>
                   <button
                     onClick={() => eliminarProducto(p._id)}
                     className="p-1.5 rounded-lg hover:bg-red-50 text-gray-500 hover:text-red-600 transition"
                   >
-                    <Trash2 size={15} />
+                    <IconTrash />
                   </button>
                 </td>
               </tr>
@@ -119,6 +135,17 @@ const Productos = () => {
           producto={productoEditar}
           onClose={() => setModalAbierto(false)}
           onGuardado={() => { setModalAbierto(false); cargarProductos(); }}
+        />
+      )}
+
+      {productoDescuento && (
+        <DescuentoModal
+          producto={productoDescuento}
+          onClose={() => setProductoDescuento(null)}
+          onGuardado={() => {
+            setProductoDescuento(null);
+            cargarProductos();
+          }}
         />
       )}
     </div>
