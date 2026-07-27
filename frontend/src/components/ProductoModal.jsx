@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { IconX } from './Icons';
@@ -9,11 +9,16 @@ const camposIniciales = {
 };
 
 const ProductoModal = ({ producto, onClose, onGuardado }) => {
-  const [form, setForm] = useState(producto || camposIniciales);
+  const [form, setForm] = useState(producto
+    ? { ...producto, categoriaId: producto.categoria?._id || '' }
+    : camposIniciales
+  );
   const [categorias, setCategorias] = useState([]);
   const [nuevaCategoria, setNuevaCategoria] = useState('');
   const [mostrarNuevaCategoria, setMostrarNuevaCategoria] = useState(false);
+  const [preview, setPreview] = useState(producto?.imagen || '');
   const [cargando, setCargando] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const cargarCategorias = async () => {
@@ -26,6 +31,23 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
     };
     cargarCategorias();
   }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('La imagen no debe superar 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+      setForm((prev) => ({ ...prev, imagen: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   const agregarNuevaCategoria = async () => {
     if (!nuevaCategoria.trim()) return;
@@ -45,11 +67,14 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
     e.preventDefault();
     setCargando(true);
     try {
+      const { categoriaId, ...resto } = form;
+      const body = categoriaId ? { ...resto, categoria: categoriaId } : resto;
+
       if (producto) {
-        await api.put(`/productos/${producto._id}`, form);
+        await api.put(`/productos/${producto._id}`, body);
         toast.success('Producto actualizado');
       } else {
-        await api.post('/productos', form);
+        await api.post('/productos', body);
         toast.success('Producto creado');
       }
       onGuardado();
@@ -68,7 +93,7 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
         className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
         value={form[name]}
         onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-        required={name !== 'descripcion' && name !== 'imagen'}
+        required={name !== 'descripcion'}
       />
     </div>
   );
@@ -135,7 +160,49 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
           {campo('Precio de venta', 'precioVenta', 'number')}
           {campo('Stock inicial', 'stock', 'number')}
           {campo('Stock mínimo', 'stockMinimo', 'number')}
-          {campo('URL de imagen', 'imagen')}
+
+          {/* Imagen */}
+          <div>
+            <label className="text-sm text-gray-600 mb-1 block">Imagen del producto</label>
+            <div className="flex flex-col gap-3">
+              {preview && (
+                <div className="relative w-full h-40 bg-gray-100 rounded-xl overflow-hidden">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreview('');
+                      setForm((prev) => ({ ...prev, imagen: '' }));
+                    }}
+                    className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition"
+                  >
+                    <IconX />
+                  </button>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="w-full border-2 border-dashed border-gray-300 rounded-xl py-4 text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition"
+              >
+                {preview ? '🔄 Cambiar imagen' : '📷 Seleccionar imagen'}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+              <p className="text-xs text-gray-400">
+                Formatos: JPG, PNG, WEBP. Máximo 2MB.
+              </p>
+            </div>
+          </div>
 
           <button
             type="submit"
