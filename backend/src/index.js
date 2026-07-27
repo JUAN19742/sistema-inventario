@@ -21,6 +21,7 @@ app.use('/api/ventas', require('./routes/venta.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/usuarios', require('./routes/usuario.routes'));
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
+app.use('/api/reportes', require('./routes/reporte.routes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
