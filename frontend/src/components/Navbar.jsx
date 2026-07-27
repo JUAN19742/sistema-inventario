@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers, IconClipboard, IconShield, IconChart } from './Icons';
+import { IconDashboard, IconPackage, IconLogOut, IconBoxes, IconSales, IconHistory, IconUsers, IconClipboard, IconShield, IconChart, IconClipboardList } from './Icons';
 import AlertasStock from './AlertasStock';
 
 const Navbar = () => {
@@ -69,6 +69,13 @@ const Navbar = () => {
         >
           <IconChart />
           Reporte ventas
+        </Link>
+        <Link
+          to="/reporte-inventario"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+        >
+          <IconClipboardList />
+          Reporte inventario
         </Link>
         {usuario?.rol === 'admin' && (
           <Link
