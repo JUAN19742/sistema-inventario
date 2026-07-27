@@ -47,3 +47,44 @@ exports.reporteVentas = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al generar reporte de ventas' });
   }
 };
+
+exports.reporteInventario = async (req, res) => {
+  try {
+    const productos = await Producto.find({ activo: true })
+      .populate('categoria', 'nombre')
+      .sort({ categoria: 1 });
+
+    const totalProductos = productos.length;
+    const valorTotalInventario = productos.reduce(
+      (sum, p) => sum + p.precioCompra * p.stock, 0
+    );
+    const productosStockBajo = productos.filter(
+      (p) => p.stock <= p.stockMinimo
+    ).length;
+    const productosEnOferta = productos.filter(
+      (p) => p.enOferta && p.descuento > 0
+    ).length;
+
+    res.json({
+      totalProductos,
+      valorTotalInventario,
+      productosStockBajo,
+      productosEnOferta,
+      productos: productos.map((p) => ({
+        _id: p._id,
+        nombre: p.nombre,
+        categoria: p.categoria?.nombre || '—',
+        stock: p.stock,
+        stockMinimo: p.stockMinimo,
+        precioCompra: p.precioCompra,
+        precioVenta: p.precioVenta,
+        valorStock: p.precioCompra * p.stock,
+        enOferta: p.enOferta,
+        descuento: p.descuento,
+        stockBajo: p.stock <= p.stockMinimo,
+      })),
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al generar reporte de inventario' });
+  }
+};
