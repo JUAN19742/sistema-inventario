@@ -15,7 +15,12 @@ exports.obtenerProductos = async (req, res) => {
   try {
     const { nombre, categoria } = req.query;
     const filtro = { activo: true };
-    if (nombre) filtro.nombre = { $regex: nombre, $options: 'i' };
+    if (nombre) {
+      filtro.$or = [
+        { nombre: { $regex: nombre, $options: 'i' } },
+        { codigo: { $regex: nombre, $options: 'i' } },
+      ];
+    }
     if (categoria) filtro.categoria = categoria;
 
     const productos = await Producto.find(filtro)
