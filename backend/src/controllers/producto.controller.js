@@ -5,7 +5,6 @@ exports.crearProducto = async (req, res) => {
     const { precioBulto, ...resto } = req.body;
     const producto = await Producto.create({
       ...resto,
-      categoria: categoriaId,
       precioBulto: precioBulto === '' ? undefined : precioBulto,
     });
     res.status(201).json(producto);
@@ -42,7 +41,6 @@ exports.actualizarProducto = async (req, res) => {
     const { precioBulto, ...resto } = req.body;
     const body = {
       ...resto,
-      ...(categoriaId ? { categoria: categoriaId } : {}),
       precioBulto: precioBulto === '' ? undefined : precioBulto,
     };
     const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
