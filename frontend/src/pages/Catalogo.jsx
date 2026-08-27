@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { IconPlus, IconMinus, IconX, IconSearch } from '../components/Icons';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const NUMERO_WHATSAPP = '59392247811';
+const NUMERO_WHATSAPP = '593982247811';
 
 const Catalogo = () => {
   const [productos, setProductos] = useState([]);
@@ -90,6 +90,7 @@ const Catalogo = () => {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-gray-900 text-white px-4 py-4 sticky top-0 z-30 flex justify-between items-center">
         <h1 className="text-lg font-bold">🛒 Mundo-Bazar</h1>
+        <p className="text-xs text-gray-400">Av. Ilaló S3-169 y Río Curaray</p>
         <button
           onClick={() => setCarritoAbierto(true)}
           className="relative bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium"
