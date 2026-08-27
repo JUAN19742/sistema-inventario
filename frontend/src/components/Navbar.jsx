@@ -9,7 +9,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-900 text-white w-64 min-h-screen flex flex-col p-4">
       <div className="mb-8">
-        <h1 className="text-xl font-bold text-white">🛒 Mi Tienda</h1>
+        <h1 className="text-xl font-bold text-white">🛒 Mundo Bazar</h1>
         <p className="text-gray-400 text-sm mt-1">Hola, {usuario?.nombre}</p>
       </div>
 

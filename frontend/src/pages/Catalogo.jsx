@@ -85,7 +85,7 @@ const Catalogo = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-gray-900 text-white px-4 py-4 sticky top-0 z-30 flex justify-between items-center">
-        <h1 className="text-lg font-bold">🛒 Mi Tienda</h1>
+        <h1 className="text-lg font-bold">🛒 Mundo Bazar</h1>
         <button
           onClick={() => setCarritoAbierto(true)}
           className="relative bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium"

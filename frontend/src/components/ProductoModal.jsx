@@ -5,12 +5,13 @@ import { IconX } from './Icons';
 
 const camposIniciales = {
   nombre: '', descripcion: '', categoriaId: '',
-  precioCompra: '', precioVenta: '', stock: '', stockMinimo: 5, imagen: ''
+  precioCompra: '', precioVenta: '', stock: '', stockMinimo: 5, imagen: '',
+  codigo: '', precioBulto: ''
 };
 
 const ProductoModal = ({ producto, onClose, onGuardado }) => {
   const [form, setForm] = useState(producto
-    ? { ...producto, categoriaId: producto.categoria?._id || '' }
+    ? { ...camposIniciales, ...producto, categoriaId: producto.categoria?._id || '' }
     : camposIniciales
   );
   const [categorias, setCategorias] = useState([]);
@@ -93,7 +94,7 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
         className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
         value={form[name]}
         onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-        required={name !== 'descripcion'}
+        required={!['descripcion', 'codigo', 'precioBulto'].includes(name)}
       />
     </div>
   );
@@ -158,6 +159,8 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
 
           {campo('Precio de compra', 'precioCompra', 'number')}
           {campo('Precio de venta', 'precioVenta', 'number')}
+          {campo('Código (opcional)', 'codigo')}
+          {campo('Precio por bulto (opcional)', 'precioBulto', 'number')}
           {campo('Stock inicial', 'stock', 'number')}
           {campo('Stock mínimo', 'stockMinimo', 'number')}
 
