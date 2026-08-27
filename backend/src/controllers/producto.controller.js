@@ -3,10 +3,14 @@ const Categoria = require('../models/Categoria');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const { categoriaId, ...resto } = req.body;
-    const producto = await Producto.create({ ...resto, categoria: categoriaId });
+    const { precioBulto, ...resto } = req.body;
+    const producto = await Producto.create({
+      ...resto,
+      precioBulto: precioBulto === '' ? undefined : precioBulto,
+    });
     res.status(201).json(producto);
   } catch (error) {
+    console.error('Error al crear producto:', error);
     if (error.code === 11000) return res.status(400).json({ mensaje: 'Ya existe un producto con ese nombre' });
     res.status(500).json({ mensaje: 'Error al crear producto' });
   }
@@ -41,12 +45,16 @@ exports.obtenerProductos = async (req, res) => {
 
 exports.actualizarProducto = async (req, res) => {
   try {
-    const { categoriaId, ...resto } = req.body;
-    const body = categoriaId ? { ...resto, categoria: categoriaId } : resto;
+    const { precioBulto, ...resto } = req.body;
+    const body = {
+      ...resto,
+      precioBulto: precioBulto === '' ? undefined : precioBulto,
+    };
     const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
   } catch (error) {
+    console.error('Error al actualizar producto:', error);
     res.status(500).json({ mensaje: 'Error al actualizar producto' });
   }
 };
