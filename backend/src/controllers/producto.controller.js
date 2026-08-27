@@ -1,4 +1,5 @@
 const Producto = require('../models/Producto');
+const Categoria = require('../models/Categoria');
 
 exports.crearProducto = async (req, res) => {
   try {
@@ -20,9 +21,15 @@ exports.obtenerProductos = async (req, res) => {
     const { nombre, categoria } = req.query;
     const filtro = { activo: true };
     if (nombre) {
+      const categoriasCoincidentes = await Categoria.find({
+        nombre: { $regex: nombre, $options: 'i' },
+      }).select('_id');
+      const idsCategorias = categoriasCoincidentes.map((c) => c._id);
+
       filtro.$or = [
         { nombre: { $regex: nombre, $options: 'i' } },
         { codigo: { $regex: nombre, $options: 'i' } },
+        { categoria: { $in: idsCategorias } },
       ];
     }
     if (categoria) filtro.categoria = categoria;
