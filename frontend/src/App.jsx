@@ -15,6 +15,7 @@ import Pedidos from './pages/Pedidos';
 import Usuarios from './pages/Usuarios';
 import ReporteVentas from './pages/ReporteVentas';
 import ReporteInventario from './pages/ReporteInventario';
+import Categorias from './pages/Categorias';
 
 const Layout = ({ children }) => (
   <div className="flex min-h-screen bg-gray-100">
@@ -79,6 +80,11 @@ const App = () => (
         <Route path="/reporte-inventario" element={
           <ProtectedRoute>
             <Layout><ReporteInventario /></Layout>
+          </ProtectedRoute>
+        }/>
+        <Route path="/categorias" element={
+          <ProtectedRoute>
+            <Layout><Categorias /></Layout>
           </ProtectedRoute>
         }/>
       </Routes>

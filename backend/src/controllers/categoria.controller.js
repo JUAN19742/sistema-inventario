@@ -21,6 +21,19 @@ exports.crearCategoria = async (req, res) => {
   }
 };
 
+exports.actualizarCategoria = async (req, res) => {
+  try {
+    const categoria = await Categoria.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!categoria) return res.status(404).json({ mensaje: 'Categoría no encontrada' });
+    res.json(categoria);
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ mensaje: 'Ya existe una categoría con ese nombre' });
+    }
+    res.status(500).json({ mensaje: 'Error al actualizar categoría' });
+  }
+};
+
 exports.eliminarCategoria = async (req, res) => {
   try {
     await Categoria.findByIdAndUpdate(req.params.id, { activo: false });
