@@ -10,6 +10,7 @@ exports.crearProducto = async (req, res) => {
     });
     res.status(201).json(producto);
   } catch (error) {
+    console.error('Error al crear producto:', error);
     if (error.code === 11000) return res.status(400).json({ mensaje: 'Ya existe un producto con ese nombre' });
     res.status(500).json({ mensaje: 'Error al crear producto' });
   }
@@ -48,6 +49,7 @@ exports.actualizarProducto = async (req, res) => {
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
   } catch (error) {
+    console.error('Error al actualizar producto:', error);
     res.status(500).json({ mensaje: 'Error al actualizar producto' });
   }
 };
