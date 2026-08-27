@@ -16,4 +16,5 @@ const productoSchema = new mongoose.Schema({
   enOferta: { type: Boolean, default: false },
 }, { timestamps: true });
 
+productoSchema.index({ createdAt: -1 });
 module.exports = mongoose.model('Producto', productoSchema);
