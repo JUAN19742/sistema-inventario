@@ -2,8 +2,12 @@ const Producto = require('../models/Producto');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const { categoriaId, ...resto } = req.body;
-    const producto = await Producto.create({ ...resto, categoria: categoriaId });
+    const { categoriaId, precioBulto, ...resto } = req.body;
+    const producto = await Producto.create({
+      ...resto,
+      categoria: categoriaId,
+      precioBulto: precioBulto === '' ? undefined : precioBulto,
+    });
     res.status(201).json(producto);
   } catch (error) {
     if (error.code === 11000) return res.status(400).json({ mensaje: 'Ya existe un producto con ese nombre' });
@@ -34,8 +38,12 @@ exports.obtenerProductos = async (req, res) => {
 
 exports.actualizarProducto = async (req, res) => {
   try {
-    const { categoriaId, ...resto } = req.body;
-    const body = categoriaId ? { ...resto, categoria: categoriaId } : resto;
+    const { categoriaId, precioBulto, ...resto } = req.body;
+    const body = {
+      ...resto,
+      ...(categoriaId ? { categoria: categoriaId } : {}),
+      precioBulto: precioBulto === '' ? undefined : precioBulto,
+    };
     const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
