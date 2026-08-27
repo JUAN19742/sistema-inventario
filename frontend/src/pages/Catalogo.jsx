@@ -3,7 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { IconPlus, IconMinus, IconX } from '../components/Icons';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const NUMERO_WHATSAPP = '59392247811'; // <-- cambia esto por tu número con código de país, sin + ni espacios
 
 const Catalogo = () => {
