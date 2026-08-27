@@ -2,7 +2,7 @@ const Producto = require('../models/Producto');
 
 exports.crearProducto = async (req, res) => {
   try {
-    const { categoriaId, precioBulto, ...resto } = req.body;
+    const { precioBulto, ...resto } = req.body;
     const producto = await Producto.create({
       ...resto,
       categoria: categoriaId,
@@ -34,7 +34,7 @@ exports.obtenerProductos = async (req, res) => {
 
 exports.actualizarProducto = async (req, res) => {
   try {
-    const { categoriaId, precioBulto, ...resto } = req.body;
+    const { precioBulto, ...resto } = req.body;
     const body = {
       ...resto,
       ...(categoriaId ? { categoria: categoriaId } : {}),
