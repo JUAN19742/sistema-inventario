@@ -4,7 +4,6 @@ const verificarRol = require('../middleware/rol.middleware');
 const {
   crearProducto,
   obtenerProductos,
-  obtenerImagenesProductos,
   actualizarProducto,
   eliminarProducto,
   obtenerAlertas,
@@ -12,7 +11,6 @@ const {
 } = require('../controllers/producto.controller');
 
 router.get('/alertas',      verificarToken, obtenerAlertas);
-router.get('/imagenes',     verificarToken, obtenerImagenesProductos);
 router.get('/',             verificarToken, obtenerProductos);
 router.post('/',            verificarToken, verificarRol('admin'), crearProducto);
 router.put('/:id',          verificarToken, verificarRol('admin'), actualizarProducto);
