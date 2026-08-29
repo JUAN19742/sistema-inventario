@@ -3,6 +3,8 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { IconPlus, IconMinus, IconTrash, IconSearch } from '../components/Icons';
 
+const TAMANO_LOTE = 10;
+
 const Ventas = () => {
   const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
@@ -11,15 +13,32 @@ const Ventas = () => {
   const [clienteId, setClienteId] = useState('');
   const [busqueda, setBusqueda] = useState('');
 
+  const cargarImagenesEnLotes = async (ids) => {
+    for (let i = 0; i < ids.length; i += TAMANO_LOTE) {
+      const lote = ids.slice(i, i + TAMANO_LOTE);
+      try {
+        const { data } = await api.get(`/productos/imagenes?ids=${lote.join(',')}`);
+        const mapaImagenes = {};
+        data.forEach((p) => { mapaImagenes[p._id] = p.imagen; });
+        setProductos((prev) =>
+          prev.map((p) => (mapaImagenes[p._id] ? { ...p, imagen: mapaImagenes[p._id] } : p))
+        );
+      } catch {
+        // si un lote falla, seguimos con el resto; esos productos se ven sin foto, nada más
+      }
+    }
+  };
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const [prodRes, cliRes] = await Promise.all([
-          api.get('/productos?conImagen=true'),
+          api.get('/productos'),
           api.get('/clientes'),
         ]);
         setProductos(prodRes.data);
         setClientes(cliRes.data);
+        cargarImagenesEnLotes(prodRes.data.map((p) => p._id));
       } catch {
         toast.error('Error al cargar datos');
       }
@@ -96,8 +115,9 @@ const Ventas = () => {
       toast.success(`Venta ${data.folio} registrada exitosamente`);
       setCarrito([]);
       setClienteId('');
-      const { data: productosActualizados } = await api.get('/productos?conImagen=true');
+      const { data: productosActualizados } = await api.get('/productos');
       setProductos(productosActualizados);
+      cargarImagenesEnLotes(productosActualizados.map((p) => p._id));
     } catch (err) {
       toast.error(err.response?.data?.mensaje || 'Error al registrar venta');
     } finally {

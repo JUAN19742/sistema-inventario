@@ -18,7 +18,7 @@ exports.crearProducto = async (req, res) => {
 
 exports.obtenerProductos = async (req, res) => {
   try {
-    const { nombre, categoria, conImagen } = req.query;
+    const { nombre, categoria } = req.query;
     const filtro = { activo: true };
     if (nombre) {
       const categoriasCoincidentes = await Categoria.find({
@@ -34,16 +34,27 @@ exports.obtenerProductos = async (req, res) => {
     }
     if (categoria) filtro.categoria = categoria;
 
-    let query = Producto.find(filtro).populate('categoria', 'nombre');
-    if (conImagen !== 'true') {
-      query = query.select('-imagen');
-    }
-
-    const productos = await query.sort({ createdAt: -1 });
+    const productos = await Producto.find(filtro)
+      .select('-imagen')
+      .populate('categoria', 'nombre')
+      .sort({ createdAt: -1 });
     res.json(productos);
   } catch (error) {
     console.error('Error al obtener productos:', error);
     res.status(500).json({ mensaje: 'Error al obtener productos' });
+  }
+};
+
+exports.obtenerImagenesProductos = async (req, res) => {
+  try {
+    const { ids } = req.query;
+    if (!ids) return res.json([]);
+    const idArray = ids.split(',').filter(Boolean);
+    const productos = await Producto.find({ _id: { $in: idArray } }).select('imagen');
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener imagenes de productos:', error);
+    res.status(500).json({ mensaje: 'Error al obtener imagenes' });
   }
 };
 
@@ -54,7 +65,7 @@ exports.actualizarProducto = async (req, res) => {
       ...resto,
       precioBulto: precioBulto === '' ? undefined : precioBulto,
     };
-    if (imagen) body.imagen = imagen; // solo toca la imagen si mandaron una nueva de verdad
+    if (imagen) body.imagen = imagen;
     const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
