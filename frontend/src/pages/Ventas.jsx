@@ -33,7 +33,7 @@ const Ventas = () => {
     const cargarDatos = async () => {
       try {
         const [prodRes, cliRes] = await Promise.all([
-          api.get('/productos'),
+          api.get('/productos?conImagen=true'),
           api.get('/clientes'),
         ]);
         setProductos(prodRes.data);
@@ -115,7 +115,7 @@ const Ventas = () => {
       toast.success(`Venta ${data.folio} registrada exitosamente`);
       setCarrito([]);
       setClienteId('');
-      const { data: productosActualizados } = await api.get('/productos');
+      const { data: productosActualizados } = await api.get('/productos?conImagen=true');
       setProductos(productosActualizados);
       cargarImagenesEnLotes(productosActualizados.map((p) => p._id));
     } catch (err) {
