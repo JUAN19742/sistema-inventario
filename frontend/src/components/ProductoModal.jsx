@@ -19,6 +19,7 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
   const [mostrarNuevaCategoria, setMostrarNuevaCategoria] = useState(false);
   const [preview, setPreview] = useState(producto?.imagen || '');
   const [cargando, setCargando] = useState(false);
+  const [comprimiendo, setComprimiendo] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -37,15 +38,38 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('La imagen no debe superar 2MB');
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('La imagen no debe superar 8MB');
       return;
     }
 
+    setComprimiendo(true);
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result);
-      setForm((prev) => ({ ...prev, imagen: reader.result }));
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_DIM = 800;
+        let { width, height } = img;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const comprimida = canvas.toDataURL('image/jpeg', 0.75);
+        setPreview(comprimida);
+        setForm((prev) => ({ ...prev, imagen: comprimida }));
+        setComprimiendo(false);
+      };
+      img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   };
@@ -164,17 +188,12 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
           {campo('Stock inicial', 'stock', 'number')}
           {campo('Stock mínimo', 'stockMinimo', 'number')}
 
-          {/* Imagen */}
           <div>
             <label className="text-sm text-gray-600 mb-1 block">Imagen del producto</label>
             <div className="flex flex-col gap-3">
               {preview && (
                 <div className="relative w-full h-40 bg-gray-100 rounded-xl overflow-hidden">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => {
@@ -190,9 +209,10 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current.click()}
-                className="w-full border-2 border-dashed border-gray-300 rounded-xl py-4 text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition"
+                disabled={comprimiendo}
+                className="w-full border-2 border-dashed border-gray-300 rounded-xl py-4 text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition disabled:opacity-50"
               >
-                {preview ? '🔄 Cambiar imagen' : '📷 Seleccionar imagen'}
+                {comprimiendo ? '⏳ Optimizando imagen...' : preview ? '🔄 Cambiar imagen' : '📷 Seleccionar imagen'}
               </button>
               <input
                 ref={fileInputRef}
@@ -202,7 +222,7 @@ const ProductoModal = ({ producto, onClose, onGuardado }) => {
                 onChange={handleImageChange}
               />
               <p className="text-xs text-gray-400">
-                Formatos: JPG, PNG, WEBP. Máximo 2MB.
+                Formatos: JPG, PNG, WEBP. Se optimiza automáticamente al subir.
               </p>
             </div>
           </div>
