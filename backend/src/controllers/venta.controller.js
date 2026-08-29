@@ -60,6 +60,7 @@ exports.registrarVenta = async (req, res) => {
 
     res.status(201).json(venta);
   } catch (error) {
+    console.error('Error al registrar venta:', error);
     res.status(500).json({ mensaje: 'Error al registrar venta' });
   }
 };
@@ -81,6 +82,7 @@ exports.obtenerVentas = async (req, res) => {
 
     res.json(ventas);
   } catch (error) {
+    console.error('Error al obtener ventas:', error);
     res.status(500).json({ mensaje: 'Error al obtener ventas' });
   }
 };
@@ -91,6 +93,7 @@ exports.obtenerVenta = async (req, res) => {
     if (!venta) return res.status(404).json({ mensaje: 'Venta no encontrada' });
     res.json(venta);
   } catch (error) {
+    console.error('Error al obtener venta:', error);
     res.status(500).json({ mensaje: 'Error al obtener venta' });
   }
 };
@@ -100,7 +103,7 @@ exports.cancelarVenta = async (req, res) => {
     const venta = await Venta.findById(req.params.id);
     if (!venta) return res.status(404).json({ mensaje: 'Venta no encontrada' });
 
-    if (venta.estado === 'cancelada') {
+    if (venta.estado === 'cancelado') {
       return res.status(400).json({ mensaje: 'La venta ya está cancelada' });
     }
 
@@ -133,11 +136,12 @@ exports.cancelarVenta = async (req, res) => {
       }
     }
 
-    venta.estado = 'cancelada';
+    venta.estado = 'cancelado';
     await venta.save();
 
     res.json({ mensaje: 'Venta cancelada correctamente', venta });
   } catch (error) {
+    console.error('Error al cancelar venta:', error);
     res.status(500).json({ mensaje: 'Error al cancelar venta' });
   }
 };
@@ -156,6 +160,7 @@ exports.obtenerVentasPorCliente = async (req, res) => {
 
     res.json({ ventas, totalGastado, totalCompras });
   } catch (error) {
+    console.error('Error al obtener ventas del cliente:', error);
     res.status(500).json({ mensaje: 'Error al obtener ventas del cliente' });
   }
 };
@@ -211,6 +216,7 @@ exports.cambiarEstadoVenta = async (req, res) => {
 
     res.json({ mensaje: 'Estado actualizado', venta });
   } catch (error) {
+    console.error('Error al cambiar estado:', error);
     res.status(500).json({ mensaje: 'Error al cambiar estado' });
   }
 };
