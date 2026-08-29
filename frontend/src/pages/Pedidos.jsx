@@ -46,6 +46,21 @@ const Pedidos = () => {
     }
   };
 
+  const cancelarPedido = async (id) => {
+    if (!confirm('¿Cancelar este pedido? Esto va a devolver el stock de los productos.')) return;
+    try {
+      await api.put(`/ventas/${id}/cancelar`);
+      toast.success('Pedido cancelado y stock restaurado');
+      const { data } = await api.get('/ventas');
+      setVentas(data);
+      if (ventaSeleccionada?._id === id) {
+        setVentaSeleccionada((prev) => ({ ...prev, estado: 'cancelado' }));
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.mensaje || 'Error al cancelar');
+    }
+  };
+
   const ventasFiltradas = filtroEstado
     ? ventas.filter((v) => v.estado === filtroEstado)
     : ventas;
@@ -117,17 +132,25 @@ const Pedidos = () => {
                 </td>
                 <td className="px-4 py-3">
                   {v.estado !== 'cancelado' && v.estado !== 'entregado' && (
-                    <select
-                      className="border rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-gray-300"
-                      value={v.estado}
-                      onChange={(e) => cambiarEstado(v._id, e.target.value)}
-                    >
-                      {ESTADOS.filter((e) => e !== 'cancelado').map((e) => (
-                        <option key={e} value={e}>
-                          {e.charAt(0).toUpperCase() + e.slice(1)}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <select
+                        className="border rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-gray-300"
+                        value={v.estado}
+                        onChange={(e) => cambiarEstado(v._id, e.target.value)}
+                      >
+                        {ESTADOS.filter((e) => e !== 'cancelado').map((e) => (
+                          <option key={e} value={e}>
+                            {e.charAt(0).toUpperCase() + e.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => cancelarPedido(v._id)}
+                        className="text-xs text-red-500 hover:text-red-700 underline"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   )}
                   {(v.estado === 'cancelado' || v.estado === 'entregado') && (
                     <span className="text-xs text-gray-400">—</span>
