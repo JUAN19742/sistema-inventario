@@ -76,6 +76,7 @@ exports.eliminarProducto = async (req, res) => {
 exports.obtenerAlertas = async (req, res) => {
   try {
     const productos = await Producto.find({ activo: true })
+      .select('nombre stock stockMinimo categoria')
       .populate('categoria', 'nombre');
 
     const alertas = productos.filter((p) => p.stock <= p.stockMinimo);
