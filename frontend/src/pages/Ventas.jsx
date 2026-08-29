@@ -15,7 +15,7 @@ const Ventas = () => {
     const cargarDatos = async () => {
       try {
         const [prodRes, cliRes] = await Promise.all([
-          api.get('/productos'),
+          api.get('/productos?conImagen=true'),
           api.get('/clientes'),
         ]);
         setProductos(prodRes.data);
@@ -96,7 +96,7 @@ const Ventas = () => {
       toast.success(`Venta ${data.folio} registrada exitosamente`);
       setCarrito([]);
       setClienteId('');
-      const { data: productosActualizados } = await api.get('/productos');
+      const { data: productosActualizados } = await api.get('/productos?conImagen=true');
       setProductos(productosActualizados);
     } catch (err) {
       toast.error(err.response?.data?.mensaje || 'Error al registrar venta');
@@ -108,7 +108,6 @@ const Ventas = () => {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
 
-      {/* Lista de productos */}
       <div className="flex-1 min-w-0">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Nueva venta</h2>
 
@@ -165,7 +164,6 @@ const Ventas = () => {
         </div>
       </div>
 
-      {/* Carrito de venta — panel fijo */}
       <div className="lg:w-80 lg:shrink-0">
         <div className="lg:sticky lg:top-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Resumen de venta</h3>

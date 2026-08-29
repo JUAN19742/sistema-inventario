@@ -51,6 +51,7 @@ exports.reporteVentas = async (req, res) => {
 exports.reporteInventario = async (req, res) => {
   try {
     const productos = await Producto.find({ activo: true })
+      .select('-imagen')
       .populate('categoria', 'nombre')
       .sort({ categoria: 1 });
 

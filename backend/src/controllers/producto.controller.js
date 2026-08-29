@@ -18,7 +18,7 @@ exports.crearProducto = async (req, res) => {
 
 exports.obtenerProductos = async (req, res) => {
   try {
-    const { nombre, categoria } = req.query;
+    const { nombre, categoria, conImagen } = req.query;
     const filtro = { activo: true };
     if (nombre) {
       const categoriasCoincidentes = await Categoria.find({
@@ -34,22 +34,27 @@ exports.obtenerProductos = async (req, res) => {
     }
     if (categoria) filtro.categoria = categoria;
 
-    const productos = await Producto.find(filtro)
-      .populate('categoria', 'nombre')
-      .sort({ createdAt: -1 });
+    let query = Producto.find(filtro).populate('categoria', 'nombre');
+    if (conImagen !== 'true') {
+      query = query.select('-imagen');
+    }
+
+    const productos = await query.sort({ createdAt: -1 });
     res.json(productos);
   } catch (error) {
+    console.error('Error al obtener productos:', error);
     res.status(500).json({ mensaje: 'Error al obtener productos' });
   }
 };
 
 exports.actualizarProducto = async (req, res) => {
   try {
-    const { precioBulto, ...resto } = req.body;
+    const { precioBulto, imagen, ...resto } = req.body;
     const body = {
       ...resto,
       precioBulto: precioBulto === '' ? undefined : precioBulto,
     };
+    if (imagen) body.imagen = imagen; // solo toca la imagen si mandaron una nueva de verdad
     const producto = await Producto.findByIdAndUpdate(req.params.id, body, { new: true });
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
@@ -69,6 +74,7 @@ exports.eliminarProducto = async (req, res) => {
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json({ mensaje: 'Producto desactivado correctamente' });
   } catch (error) {
+    console.error('Error al eliminar producto:', error);
     res.status(500).json({ mensaje: 'Error al eliminar producto' });
   }
 };
@@ -92,6 +98,7 @@ exports.obtenerAlertas = async (req, res) => {
       })),
     });
   } catch (error) {
+    console.error('Error al obtener alertas:', error);
     res.status(500).json({ mensaje: 'Error al obtener alertas' });
   }
 };
@@ -99,20 +106,18 @@ exports.obtenerAlertas = async (req, res) => {
 exports.actualizarDescuento = async (req, res) => {
   try {
     const { descuento, enOferta } = req.body;
-
     if (descuento < 0 || descuento > 100) {
       return res.status(400).json({ mensaje: 'El descuento debe estar entre 0 y 100' });
     }
-
     const producto = await Producto.findByIdAndUpdate(
       req.params.id,
       { descuento, enOferta },
       { new: true }
     );
-
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
     res.json(producto);
   } catch (error) {
+    console.error('Error al actualizar descuento:', error);
     res.status(500).json({ mensaje: 'Error al actualizar descuento' });
   }
 };
